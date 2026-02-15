@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from advertorch.utils import NormalizeByChannelMeanStd
-from torchvision.models.utils import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
 from .conv import SparseConv2D
 

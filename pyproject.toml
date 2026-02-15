@@ -1,0 +1,14 @@
+[project]
+name = "slth"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "advertorch==0.1.5",
+    "matplotlib>=3.7.5",
+    "torch>=2.3.1",
+    "torchaudio==2.3.1",
+    "torchvision>=0.18.1",
+    "tqdm>=4.67.3",
+]

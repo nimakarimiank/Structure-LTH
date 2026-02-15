@@ -3,32 +3,32 @@ iterative pruning for supervised task
 with lottery tickets or pretrain tickets 
 support datasets: cifar10, Fashionmnist, cifar100
 '''
+import torch.autograd.gradcheck
+import collections.abc
 
-import os
-import pdb
-import time 
-import pickle
+# 1. Define the missing function (copied from PyTorch 1.8 source)
+def zero_gradients(x):
+    if isinstance(x, torch.Tensor):
+        if x.grad is not None:
+            x.grad.detach_()
+            x.grad.zero_()
+    elif isinstance(x, collections.abc.Iterable):
+        for elem in x:
+            zero_gradients(elem)
+
+# 2. Inject it back into the module so advertorch can find it
+torch.autograd.gradcheck.zero_gradients = zero_gradients
+import argparse
 import random
 import shutil
-import argparse
-import numpy as np  
-from copy import deepcopy
+import time
+
 import matplotlib.pyplot as plt
-
-import torch
 import torch.optim
-import torch.nn as nn
 import torch.utils.data
-import torch.nn.functional as F
-import torchvision.models as models
-import torch.backends.cudnn as cudnn
-import torchvision.transforms as transforms
-import torchvision.datasets as datasets
-from torch.utils.data.sampler import SubsetRandomSampler
-from advertorch.utils import NormalizeByChannelMeanStd
 
-from utils import *
 from pruning_utils import *
+from utils import *
 
 parser = argparse.ArgumentParser(description='PyTorch Iterative Pruning')
 
@@ -243,6 +243,7 @@ def main():
         if args.fillback:
             prune_model_custom_fillback(model, current_mask, criteria=args.criteria, train_loader=train_loader)
         elif args.fillback_slow:
+            ## TODO: UNDEFINED DECLARATION
             prune_model_custom_fillback_slow(model, current_mask)
         else:
             prune_model_custom(model, current_mask)

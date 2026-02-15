@@ -1,18 +1,38 @@
-import copy 
-import torch
-import numpy as np
-from torchvision.models import mobilenet
-from models.resnet import resnet18, resnet50, resnet152, resnext101_32x8d, wide_resnet50_2, resnext50_32x4d, resnet18_2, resnet18_3, resnet18_4, resnet18_5, resnet18_6, resnet50_2, resnet50_3, resnet50_4, resnet50_5, resnet50_6
-from models.resnets import resnet20, resnet56
-from models.densenet import densenet161
-from models.shufflenet import shufflenet_v2_x1_0
-from models.resnets_2fc import resnet20 as resnet20_2fc
-from models.mobilenet import MobileNet, MobileNet1, MobileNet2, MobileNet4, MobileNet3, MobileNet5
-from models.resnet12 import resnet12
+
+
+
+import torch.autograd.gradcheck
+import collections.abc
+
+# 1. Define the missing function (copied from PyTorch 1.8 source)
+def zero_gradients(x):
+    if isinstance(x, torch.Tensor):
+        if x.grad is not None:
+            x.grad.detach_()
+            x.grad.zero_()
+    elif isinstance(x, collections.abc.Iterable):
+        for elem in x:
+            zero_gradients(elem)
+
+# 2. Inject it back into the module so advertorch can find it
+torch.autograd.gradcheck.zero_gradients = zero_gradients
+
+# ... rest of your imports ...
+from utils import *
+import copy
+
+
 from advertorch.utils import NormalizeByChannelMeanStd
+
 from dataset import *
-from models.vgg import vgg16_bn
+from models.mobilenet import MobileNet, MobileNet1, MobileNet2, MobileNet4, MobileNet3, MobileNet5
+from models.resnet import resnet18, resnet50, resnet18_2, resnet18_3, resnet18_4, resnet18_5, resnet18_6, resnet50_2, \
+    resnet50_3, resnet50_4, resnet50_5, resnet50_6
+from models.resnet12 import resnet12
 from models.resnet_grasp import resnet32 as wrn32
+from models.resnets import resnet20, resnet56
+from models.vgg import vgg16_bn
+
 
 def setup_model_dataset(args):
     trigger_set_dataloader = None
